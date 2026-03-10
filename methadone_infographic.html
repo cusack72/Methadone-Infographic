@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Intraoperative Methadone Reference</title>
+<style>
+  :root {
+    --navy: #0f2744;
+    --blue: #1a4a8a;
+    --teal: #0d7377;
+    --teal-light: #14a085;
+    --amber: #e67e22;
+    --red: #c0392b;
+    --green: #27ae60;
+    --green-light: #2ecc71;
+    --gray-bg: #f0f4f8;
+    --card-bg: #ffffff;
+    --warn-bg: #fef9e7;
+    --danger-bg: #fdecea;
+    --success-bg: #eafaf1;
+    --text: #1a1a2e;
+    --muted: #5a6a7a;
+    --border: #dce3ec;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--gray-bg); color: var(--text); font-size: 13px; line-height: 1.5; }
+
+  /* HEADER */
+  .header { background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 60%, var(--teal) 100%); color: #fff; padding: 22px 32px 18px; display: flex; justify-content: space-between; align-items: center; }
+  .header-left h1 { font-size: 22px; font-weight: 800; letter-spacing: 0.5px; }
+  .header-left p { font-size: 12px; color: #a8c8f0; margin-top: 3px; }
+  .header-badge { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; padding: 8px 16px; text-align: center; }
+  .header-badge .badge-label { font-size: 10px; color: #a8c8f0; text-transform: uppercase; letter-spacing: 1px; }
+  .header-badge .badge-val { font-size: 15px; font-weight: 700; }
+
+  /* NAV TABS */
+  .tabs { display: flex; background: var(--navy); overflow-x: auto; gap: 2px; padding: 0 12px; }
+  .tab { padding: 9px 14px; cursor: pointer; color: #8bacd4; font-size: 11.5px; font-weight: 600; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s; }
+  .tab:hover { color: #fff; }
+  .tab.active { color: #fff; border-bottom-color: var(--teal-light); }
+
+  /* SECTIONS */
+  .section { display: none; padding: 18px 20px; max-width: 1200px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .col-span-2 { grid-column: span 2; }
+
+  /* CARDS */
+  .card { background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border); padding: 14px 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .card-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--blue); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .card-title .icon { font-size: 14px; }
+
+  /* MECHANISM PILLS */
+  .mech-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+  .mech-pill { border-radius: 10px; padding: 12px 14px; }
+  .mech-pill.mu { background: linear-gradient(135deg, #1a4a8a, #2980b9); color: #fff; }
+  .mech-pill.nmda { background: linear-gradient(135deg, #0d7377, #17a589); color: #fff; }
+  .mech-pill.snri { background: linear-gradient(135deg, #6c3483, #9b59b6); color: #fff; }
+  .mech-pill h4 { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+  .mech-pill p { font-size: 11px; opacity: 0.9; }
+  .unique-box { background: linear-gradient(135deg, #0f2744, #1a4a8a); color: #fff; border-radius: 10px; padding: 12px 16px; font-size: 12px; }
+  .unique-box strong { color: #5ddddd; }
+
+  /* TABLES */
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { background: var(--navy); color: #fff; padding: 8px 10px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+  td { padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #f7fafc; }
+  .highlight-row td { background: #e8f4fd !important; font-weight: 600; }
+
+  /* ALERT BOXES */
+  .alert { border-radius: 8px; padding: 10px 14px; font-size: 12px; margin-top: 10px; display: flex; gap: 10px; align-items: flex-start; }
+  .alert.warn { background: var(--warn-bg); border-left: 4px solid var(--amber); }
+  .alert.danger { background: var(--danger-bg); border-left: 4px solid var(--red); }
+  .alert.success { background: var(--success-bg); border-left: 4px solid var(--green); }
+  .alert.info { background: #eaf2fb; border-left: 4px solid var(--blue); }
+  .alert-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .alert strong { display: block; margin-bottom: 2px; }
+
+  /* DOSE CARDS */
+  .dose-card { border-radius: 8px; border: 1px solid var(--border); overflow: hidden; }
+  .dose-card-header { background: var(--blue); color: #fff; padding: 8px 12px; font-size: 11.5px; font-weight: 700; }
+  .dose-card-body { padding: 10px 12px; font-size: 12px; }
+  .dose-val { font-size: 18px; font-weight: 800; color: var(--teal); }
+  .dose-sub { font-size: 11px; color: var(--muted); }
+
+  /* BADGE TAGS */
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 10.5px; font-weight: 600; margin: 2px; }
+  .tag.green { background: #d5f5e3; color: #1e8449; }
+  .tag.red { background: #fadbd8; color: #922b21; }
+  .tag.amber { background: #fef9e7; color: #b7770d; border: 1px solid #f0c040; }
+  .tag.blue { background: #d6eaf8; color: #1a5276; }
+  .tag.purple { background: #e8daef; color: #6c3483; }
+
+  /* STAT BOXES */
+  .stat-box { background: linear-gradient(135deg, var(--navy), var(--blue)); color: #fff; border-radius: 10px; padding: 14px; text-align: center; }
+  .stat-num { font-size: 26px; font-weight: 800; color: #5ddddd; }
+  .stat-label { font-size: 11px; color: #a8c8f0; margin-top: 2px; }
+
+  /* LISTS */
+  .check-list { list-style: none; }
+  .check-list li { padding: 4px 0; font-size: 12px; display: flex; gap: 8px; }
+  .check-list li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+  .x-list { list-style: none; }
+  .x-list li { padding: 4px 0; font-size: 12px; display: flex; gap: 8px; }
+  .x-list li::before { content: '✗'; color: var(--red); font-weight: 700; flex-shrink: 0; }
+  .caution-list { list-style: none; }
+  .caution-list li { padding: 4px 0; font-size: 12px; display: flex; gap: 8px; }
+  .caution-list li::before { content: '⚠'; color: var(--amber); font-weight: 700; flex-shrink: 0; }
+
+  /* SECTION HEADINGS */
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .section-header h2 { font-size: 16px; font-weight: 800; color: var(--navy); }
+  .section-header .sh-badge { background: var(--navy); color: #fff; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+
+  /* DRUG INTERACTION */
+  .di-box { border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
+  .di-box.decrease { background: #fff3e0; border-left: 4px solid #e65100; }
+  .di-box.increase { background: #fce4ec; border-left: 4px solid #c62828; }
+  .di-box.serotonin { background: #f3e5f5; border-left: 4px solid #7b1fa2; }
+  .di-box h4 { font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+  .di-box p { font-size: 11.5px; color: #444; }
+
+  /* RESPONSIVE */
+  @media (max-width: 700px) {
+    .grid-2, .grid-3, .grid-4, .mech-grid { grid-template-columns: 1fr; }
+    .col-span-2 { grid-column: span 1; }
+  }
+
+  /* FOOTER */
+  .footer { background: var(--navy); color: #8bacd4; text-align: center; font-size: 11px; padding: 12px; margin-top: 20px; }
+
+  /* PK BAR */
+  .pk-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+  .pk-label { width: 180px; flex-shrink: 0; font-weight: 600; color: var(--navy); }
+  .pk-val { flex: 1; }
+  .pk-tag { background: #e8f4fd; color: var(--blue); padding: 2px 8px; border-radius: 6px; font-weight: 600; font-size: 11.5px; }
+
+  .divider { height: 1px; background: var(--border); margin: 14px 0; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <h1>💊 Intraoperative Methadone</h1>
+    <p>Evidence-Based Clinical Reference &nbsp;|&nbsp; Adult Patients ≥18 Years &nbsp;|&nbsp; Anesthesiologists / CRNAs</p>
+  </div>
+  <div style="display:flex;gap:10px;">
+    <div class="header-badge"><div class="badge-label">Half-Life</div><div class="badge-val">24–36 hrs</div></div>
+    <div class="header-badge"><div class="badge-label">Onset IV</div><div class="badge-val">4–8 min</div></div>
+    <div class="header-badge"><div class="badge-label">Opioid Sparing</div><div class="badge-val">40–69%</div></div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="showTab('moa')">⚗️ MOA & PK</div>
+  <div class="tab" onclick="showTab('dosing')">💉 Dosing</div>
+  <div class="tab" onclick="showTab('admin')">🩺 Administration</div>
+  <div class="tab" onclick="showTab('selection')">✅ Patient Selection</div>
+  <div class="tab" onclick="showTab('safety')">⚠️ Safety & Interactions</div>
+  <div class="tab" onclick="showTab('pacu')">🏥 PACU & Discharge</div>
+  <div class="tab" onclick="showTab('evidence')">📊 Evidence</div>
+</div>
+
+<!-- ===== TAB 1: MOA & PK ===== -->
+<div id="moa" class="section active">
+  <div class="section-header"><div class="sh-badge">1</div><h2>Mechanism of Action & Pharmacokinetics</h2></div>
+
+  <div class="mech-grid">
+    <div class="mech-pill mu">
+      <h4>μ-Opioid Receptor Agonist</h4>
+      <p>Analgesia, respiratory depression, decreased GI motility. Primary analgesic mechanism.</p>
+    </div>
+    <div class="mech-pill nmda">
+      <h4>NMDA Receptor Antagonist</h4>
+      <p>Prevents opioid tolerance & hyperalgesia. Synergistic with ketamine. Extends analgesia beyond plasma levels.</p>
+    </div>
+    <div class="mech-pill snri">
+      <h4>SNRI Activity</h4>
+      <p>Serotonin & norepinephrine reuptake inhibitor. Modulates central pain pathways. Also has δ and κ opioid receptor affinity.</p>
+    </div>
+  </div>
+
+  <div class="unique-box" style="margin-bottom:14px;">
+    🌟 <strong>What makes it unique:</strong> The <strong>ONLY</strong> perioperative opioid combining all three mechanisms. Analgesia outlasts measurable plasma concentration — non-opioid mechanisms contribute beyond the elimination phase.
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="icon">📈</span>Pharmacokinetic Parameters</div>
+      <div class="pk-row"><div class="pk-label">IV Onset</div><div class="pk-val"><span class="pk-tag">~4–8 min</span></div></div>
+      <div class="pk-row"><div class="pk-label">Peak Respiratory Depression</div><div class="pk-val"><span class="pk-tag">8–10 min post-bolus</span> &nbsp;resolves 30–45 min via redistribution</div></div>
+      <div class="pk-row"><div class="pk-label">Oral Bioavailability</div><div class="pk-val"><span class="pk-tag">70–80%</span> &nbsp;minimal first-pass (&lt;10%)</div></div>
+      <div class="pk-row"><div class="pk-label">Elimination Half-Life</div><div class="pk-val"><span class="pk-tag">24–36 hours</span></div></div>
+      <div class="pk-row"><div class="pk-label">Metabolism</div><div class="pk-val">Hepatic CYP450 (primarily <strong>CYP2B6</strong>)</div></div>
+      <div class="pk-row"><div class="pk-label">Renal Failure</div><div class="pk-val">✅ Does NOT accumulate — safe in ESRD; not removed by dialysis</div></div>
+      <div class="pk-row"><div class="pk-label">MEAC</div><div class="pk-val"><span class="pk-tag">~30 ng/mL</span></div></div>
+      <div class="pk-row"><div class="pk-label">Resp. Depression Threshold</div><div class="pk-val"><span class="pk-tag">~100 ng/mL</span></div></div>
+      <div class="pk-row" style="border:none;"><div class="pk-label">Elderly (&gt;60 y)</div><div class="pk-val">⚠️ Slower elimination — reduce dose to 15 mg fixed</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">⏱️</span>Analgesic Duration by Dose</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div class="stat-box"><div class="stat-num">~0.5h</div><div class="stat-label">5–10 mg dose<br>(redistribution)</div></div>
+        <div class="stat-box"><div class="stat-num">~24h</div><div class="stat-label">20 mg dose</div></div>
+        <div class="stat-box"><div class="stat-num">~36h</div><div class="stat-label">30 mg dose</div></div>
+      </div>
+      <div class="alert info"><div class="alert-icon">💡</div><div><strong>Key Concept</strong>At doses ≥20 mg, analgesic duration approximates the elimination half-life. <strong>Dose matters enormously.</strong></div></div>
+      <div class="alert warn" style="margin-top:10px;"><div class="alert-icon">⚠️</div><div><strong>Potency vs. Morphine</strong>Non-linear and unpredictable — equianalgesic conversion is <strong>unreliable</strong>. Use weight-based dosing (mg/kg IBW), NOT opioid conversion math.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 2: DOSING ===== -->
+<div id="dosing" class="section">
+  <div class="section-header"><div class="sh-badge">2</div><h2>Dosing Strategies</h2></div>
+
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-title"><span class="icon">💉</span>Opioid-Naïve Adult Patients — IV at Induction</div>
+    <table>
+      <thead><tr><th>Expected Pain Level / Procedure</th><th>Recommended Dose</th></tr></thead>
+      <tbody>
+        <tr class="highlight-row"><td>Moderate–severe pain (spine, open abdominal, thoracic, cardiac)</td><td>0.2–0.3 mg/kg IBW &nbsp;<em>or</em>&nbsp; <strong>20 mg fixed</strong></td></tr>
+        <tr><td>Cardiac surgery</td><td>0.2 mg/kg actual body weight, max 20 mg</td></tr>
+        <tr><td>Mild–moderate (laparoscopic, ambulatory)</td><td>0.1–0.15 mg/kg IBW &nbsp;<em>or</em>&nbsp; <strong>10 mg fixed</strong></td></tr>
+        <tr><td>Next-day discharge surgery</td><td>0.25 mg/kg IBW (~14 mg)</td></tr>
+        <tr><td>Age &gt;60 or reduced physiologic reserve</td><td><strong>15 mg fixed dose</strong></td></tr>
+      </tbody>
+    </table>
+    <div class="alert warn" style="margin-top:10px;"><div class="alert-icon">⚠️</div><div>Higher doses (&gt;0.3 mg/kg) linked to increased PONV, delirium, and longer LOS — <strong>low-to-medium doses preferred.</strong></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🚨</span>PACU Rescue Dosing</div>
+    <div class="alert info" style="margin-bottom:12px;"><div class="alert-icon">📋</div><div><strong>Prerequisites:</strong> Require RR ≥10 and no significant sedation before re-dosing. Wait at least 10 min between doses.</div></div>
+    <div class="grid-2">
+      <div class="dose-card">
+        <div class="dose-card-header">Mild–Moderate Procedures</div>
+        <div class="dose-card-body"><div class="dose-val">2–3 mg IV</div><div class="dose-sub">q10 minutes PRN</div></div>
+      </div>
+      <div class="dose-card">
+        <div class="dose-card-header">Painful Procedures</div>
+        <div class="dose-card-body"><div class="dose-val">3–5 mg IV</div><div class="dose-sub">q10–20 minutes PRN</div></div>
+      </div>
+    </div>
+    <div class="alert danger" style="margin-top:12px;"><div class="alert-icon">🚨</div><div><strong>Respiratory Depression:</strong> Single-dose naloxone is <strong>INSUFFICIENT</strong> given methadone's half-life. Start <strong>naloxone infusion ≥24 hours.</strong></div></div>
+  </div>
+</div>
+
+<!-- ===== TAB 3: ADMINISTRATION ===== -->
+<div id="admin" class="section">
+  <div class="section-header"><div class="sh-badge">3</div><h2>Administration & Anesthetic Adjustments</h2></div>
+
+  <div class="grid-2" style="margin-bottom:14px;">
+    <div class="card">
+      <div class="card-title"><span class="icon">💉</span>Route & Timing</div>
+      <ul class="check-list">
+        <li><strong>IV (General Surgery):</strong> Slow bolus over ~1 min</li>
+        <li><strong>IV (Cardiac / High-Risk):</strong> Slow infusion over 30 minutes preferred</li>
+        <li><strong>Oral:</strong> Administer at least 30–60 min before incision</li>
+        <li><strong>Timing:</strong> Give at or shortly after induction — peak respiratory depression occurs while patient is intubated ✓</li>
+        <li><strong>Do NOT re-dose</strong> intraoperatively in opioid-naïve patients</li>
+        <li>Reduce or eliminate other intraoperative opioids — small supplemental fentanyl (100–200 mcg) acceptable for intubation</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">🫀</span>Hemodynamic & Safety Profile</div>
+      <ul class="check-list">
+        <li>No histamine release — no red man syndrome or flushing</li>
+        <li>No unique hemodynamic effects at standard doses</li>
+        <li>Monitor BP as with any opioid</li>
+        <li>No special cardiac monitoring required for a single intraoperative dose</li>
+        <li>QTc effects associated with <strong>chronic use only</strong> (not single perioperative dose)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💊</span>Adjustments to Other Anesthetic Medications</div>
+    <table>
+      <thead><tr><th>Drug / Drug Class</th><th>Recommendation</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Other intraoperative opioids</strong></td><td>Reduce or eliminate</td></tr>
+        <tr><td><strong>Ondansetron (Zofran)</strong></td><td>✅ Safe to give; no increased QTc risk; reduced PONV noted with methadone</td></tr>
+        <tr><td><strong>Ketamine</strong></td><td>Consider 0.3 mg/kg IV at induction + 0.1 mg/kg/h ×48h — additive opioid-sparing effect</td></tr>
+        <tr><td><strong>Gabapentinoids</strong></td><td>⚠️ Attenuates hyperalgesia, but combination carries higher respiratory depression risk — use conservative doses</td></tr>
+        <tr><td><strong>Benzodiazepines / Sedatives</strong></td><td>Standard caution — additive sedation; no need to withhold</td></tr>
+        <tr><td><strong>Neuromuscular reversal, propofol, volatile agents</strong></td><td>✅ No specific adjustments needed</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== TAB 4: PATIENT SELECTION ===== -->
+<div id="selection" class="section">
+  <div class="section-header"><div class="sh-badge">4</div><h2>Patient Selection Criteria & Contraindications</h2></div>
+
+  <div class="grid-2" style="margin-bottom:14px;">
+    <div class="card">
+      <div class="card-title" style="color:var(--green);">✅ Ideal Candidates</div>
+      <ul class="check-list">
+        <li>Opioid-naïve adults undergoing <strong>moderate–severe pain</strong> surgeries: spine (multilevel fusion), cardiac (CABG, valve), open abdominal, thoracic, gynecologic, CRS/HIPEC</li>
+        <li>Case duration <strong>≥1–2 hours</strong> (allows peak respiratory depression to resolve before extubation)</li>
+        <li>Patients at risk for <strong>chronic post-surgical pain</strong> (NMDA antagonism may reduce central sensitization)</li>
+        <li><strong>Bariatric patients</strong> — reduces total opioid burden in high-risk respiratory population</li>
+        <li><strong>Renal failure / ESRD</strong> — safe, does not accumulate</li>
+        <li><strong>Same-day and next-day discharge</strong> surgery at appropriate doses (0.1–0.25 mg/kg IBW)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="color:var(--red);">✗ Absolute Contraindications</div>
+      <ul class="x-list" style="margin-bottom:14px;">
+        <li>Known anaphylaxis to methadone</li>
+        <li>Pre-existing respiratory depression or severe uncontrolled respiratory disease</li>
+        <li>Active ileus</li>
+        <li>QTc <strong>≥500 ms</strong></li>
+      </ul>
+      <div class="card-title" style="color:var(--amber);">⚠️ Use with Caution</div>
+      <ul class="caution-list">
+        <li>Multiple QT-prolonging medications (obtain preop ECG if risk factors present)</li>
+        <li>Serotonergic medications (SSRIs, SNRIs, MAOIs, tramadol) — theoretical serotonin syndrome risk</li>
+        <li>Severe liver disease — start lower; CYP metabolism may be impaired</li>
+        <li>Very short cases (&lt;45–60 min) — peak respiratory depression may overlap with extubation</li>
+        <li>Patients on CYP2B6 inducers/inhibitors</li>
+        <li>Elderly patients (&gt;60 y) — slower elimination; reduce to 15 mg</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🔄</span>Patients on Chronic Methadone (OUD or Chronic Pain)</div>
+    <div class="grid-2">
+      <ul class="check-list">
+        <li>Continue home methadone — <strong>do not convert</strong> to another opioid</li>
+        <li>Verify dose with patient's methadone clinic preoperatively; document in EMR</li>
+        <li>Oral route preferred; if oral not possible: IV = 1/4 of daily oral dose BID (may titrate to QID)</li>
+        <li><strong>Do NOT attempt opioid rotation</strong> — unreliable due to significant PK/PD variability</li>
+        <li>Expect higher opioid requirements than opioid-naïve patients</li>
+        <li>On discharge: arrange methadone clinic continuity</li>
+      </ul>
+      <div>
+        <div class="card-title" style="font-size:11px;">Managing Acute Post-Surgical Pain — Stepwise</div>
+        <div style="counter-reset:steps;">
+          <div style="display:flex;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px;"><div style="background:var(--blue);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;">1</div><div>Maximize multimodal non-opioid analgesics (acetaminophen, NSAIDs, ketamine, local anesthetics, steroids, gabapentinoids)</div></div>
+          <div style="display:flex;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px;"><div style="background:var(--blue);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;">2</div><div>Add regional anesthetic techniques where feasible</div></div>
+          <div style="display:flex;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px;"><div style="background:var(--blue);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;">3</div><div>Supplement with short-acting opioids as needed — expect higher requirements</div></div>
+          <div style="display:flex;gap:8px;padding:5px 0;font-size:12px;"><div style="background:var(--red);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;">✗</div><div><strong>Avoid partial agonists</strong> (buprenorphine, butorphanol) — will precipitate withdrawal</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 5: SAFETY & INTERACTIONS ===== -->
+<div id="safety" class="section">
+  <div class="section-header"><div class="sh-badge">5</div><h2>Safety Profile, Adverse Effects & Drug Interactions</h2></div>
+
+  <div class="grid-2" style="margin-bottom:14px;">
+    <div class="card">
+      <div class="card-title"><span class="icon">🚨</span>Adverse Effects</div>
+      <table>
+        <thead><tr><th>Effect</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Respiratory depression</strong></td><td>Peak 8–10 min; resolves 30–45 min. Large retrospective data (n&gt;14,500) shows no significant difference vs. morphine.</td></tr>
+          <tr><td><strong>QT prolongation</strong></td><td>Clinically insignificant with single perioperative dose; risk is dose/duration-dependent — primarily chronic use &gt;150 mg/day</td></tr>
+          <tr><td><strong>Serotonin syndrome</strong></td><td>Theoretical; perioperative cases extremely rare. Watch for fever, AMS, tachycardia, rigidity, tremors in patients on antidepressants.</td></tr>
+          <tr><td><strong>PONV</strong></td><td>No difference or slight reduction vs. some comparators</td></tr>
+          <tr><td><strong>Somnolence</strong></td><td>Patient may take longer to arouse and recover</td></tr>
+          <tr><td><strong>Pruritus</strong></td><td>Reported</td></tr>
+          <tr><td><strong>Hypotension</strong></td><td>Episodes noted in obese population; no adverse outcomes reported</td></tr>
+          <tr><td><strong>Bowel motility</strong></td><td>Possible prolonged effect; data mixed</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-title"><span class="icon">💊</span>Drug Interactions</div>
+        <div class="di-box decrease">
+          <h4>↓ Methadone Levels — CYP Inducers</h4>
+          <p style="margin-bottom:4px;font-size:11px;color:#666;">Risk: Withdrawal or inadequate analgesia</p>
+          <div>
+            <span class="tag amber">Nevirapine</span><span class="tag amber">Efavirenz</span><span class="tag amber">Carbamazepine</span><span class="tag amber">Phenobarbital</span><span class="tag amber">Phenytoin</span><span class="tag amber">Rifampin</span><span class="tag amber">Dexamethasone</span><span class="tag amber">St. John's Wort</span>
+          </div>
+        </div>
+        <div class="di-box increase" style="margin-top:8px;">
+          <h4>↑ Methadone Levels — CYP Inhibitors</h4>
+          <p style="margin-bottom:4px;font-size:11px;color:#666;">Risk: Overdose, respiratory depression, arrhythmia</p>
+          <div>
+            <span class="tag red">Fluconazole</span><span class="tag red">Voriconazole</span><span class="tag red">Ketoconazole</span><span class="tag red">Ciprofloxacin</span><span class="tag red">Azithromycin</span><span class="tag red">Erythromycin</span><span class="tag red">Fluoxetine</span><span class="tag red">Fluvoxamine</span><span class="tag red">Paroxetine</span><span class="tag red">Sertraline</span><span class="tag red">Verapamil</span><span class="tag red">Diltiazem</span><span class="tag red">Diazepam</span><span class="tag red">Cimetidine</span><span class="tag red">Spironolactone</span>
+          </div>
+        </div>
+        <div class="di-box serotonin" style="margin-top:8px;">
+          <h4>⚡ Serotonin Syndrome Risk</h4>
+          <div>
+            <span class="tag purple">SSRIs</span><span class="tag purple">SNRIs</span><span class="tag purple">MAOIs</span><span class="tag purple">Linezolid</span><span class="tag purple">Tramadol</span><span class="tag purple">Meperidine</span>
+          </div>
+        </div>
+      </div>
+      <div class="alert warn"><div class="alert-icon">⚠️</div><div>Always use an online drug interaction tool to check home medications. Weak-to-moderate interactions also noted with gabapentinoids, baclofen, benzodiazepines, methocarbamol, quetiapine, and simvastatin — confirmatory studies still needed.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 6: PACU & DISCHARGE ===== -->
+<div id="pacu" class="section">
+  <div class="section-header"><div class="sh-badge">6</div><h2>PACU, Discharge & Pharmacy</h2></div>
+
+  <div class="grid-2" style="margin-bottom:14px;">
+    <div class="card">
+      <div class="card-title"><span class="icon">🏥</span>What PACU Needs to Know</div>
+      <ul class="check-list" style="margin-bottom:10px;">
+        <li>Patient received intraoperative methadone — analgesic effect lasts <strong>up to 24–36 hours</strong></li>
+        <li>Expect <strong>reduced opioid requirements</strong> — titrate rescue doses cautiously</li>
+        <li>Ensure <strong>RR ≥10</strong> before giving additional opioids</li>
+        <li>Peak respiratory depression has already passed intraoperatively — ongoing vigilance still required</li>
+        <li><strong>Extended monitoring</strong> warranted for obese patients, OSA, or elderly</li>
+        <li>Standard opioid discharge criteria apply — no unique methadone-specific PACU checklist needed for single intraoperative dose</li>
+      </ul>
+      <div class="alert danger"><div class="alert-icon">🚨</div><div><strong>If respiratory depression suspected:</strong> Do NOT give single-dose naloxone — start <strong>naloxone infusion ≥24 hours</strong></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🏠</span>Patient Discharge Instructions</div>
+      <ul class="check-list">
+        <li>Pain relief may be prolonged up to <strong>24 hours</strong> — expected and intentional</li>
+        <li>Avoid alcohol and CNS depressants for <strong>24 hours</strong></li>
+        <li>Do not drive or operate heavy machinery for <strong>24–36 hours</strong></li>
+        <li>No dietary restrictions specific to methadone</li>
+        <li>Patient may need fewer opioid pills at home — consider prescribing less; instruct on safe storage and disposal</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💰</span>Pharmacy & Cost Considerations</div>
+    <div class="grid-2">
+      <div>
+        <p style="font-size:12px;margin-bottom:10px;">Methadone for pain (not addiction treatment) is a <strong>Schedule II opioid</strong> — most hospital pharmacies can stock without special licensing. To add to formulary: work with pharmacy director/formulary committee.</p>
+        <table>
+          <thead><tr><th>Drug</th><th>Typical Dose</th><th>Cost</th></tr></thead>
+          <tbody>
+            <tr style="background:#fdecea;"><td><strong>Methadone IV (10mg/mL)</strong></td><td>20 mg</td><td><strong>~$49–56</strong></td></tr>
+            <tr><td>Fentanyl IV</td><td>200 mcg</td><td>~$9–11</td></tr>
+            <tr><td>Morphine IV</td><td>10 mg</td><td>~$8–10</td></tr>
+            <tr><td>Hydromorphone IV</td><td>2 mg</td><td>~$4–44</td></tr>
+          </tbody>
+        </table>
+        <div class="alert info" style="margin-top:8px;"><div class="alert-icon">💡</div><div>Methadone has higher upfront IV cost. The cost argument is <strong>total perioperative opioid burden</strong>, not per-dose cost.</div></div>
+      </div>
+      <div>
+        <div class="alert success" style="margin-bottom:10px;"><div class="alert-icon">✅</div><div><strong>Oral Methadone: 40–100× Cheaper</strong><br>Oral tablet (10 mg): ~$0.15–0.70 vs. IV: ~$49–56 per 20 mg dose. Shown non-inferior to IV for pain scores and opioid consumption in multilevel spine surgery.</div></div>
+        <div class="card-title" style="font-size:11px;margin-bottom:6px;">Total Cost-of-Care Argument</div>
+        <ul class="check-list">
+          <li>40–69% reduction in postoperative opioid consumption</li>
+          <li>Fewer PACU rescue doses → less nursing time and drug cost</li>
+          <li>Shorter hospital LOS in select procedures</li>
+          <li>Fewer opioids prescribed at discharge</li>
+          <li>Possible reduction in chronic post-surgical pain → long-term downstream savings</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 7: EVIDENCE ===== -->
+<div id="evidence" class="section">
+  <div class="section-header"><div class="sh-badge">7</div><h2>Evidence Summary</h2></div>
+
+  <div class="grid-4" style="margin-bottom:14px;">
+    <div class="stat-box"><div class="stat-num">40–69%</div><div class="stat-label">Reduction in postop opioid consumption</div></div>
+    <div class="stat-box"><div class="stat-num">~27h</div><div class="stat-label">Median analgesic duration (Gourlay 1982)</div></div>
+    <div class="stat-box"><div class="stat-num">63%</div><div class="stat-label">Less morphine at 24h (Wong 2026 RCT)</div></div>
+    <div class="stat-box"><div class="stat-num">&gt;29K</div><div class="stat-label">Patients in retrospective safety studies</div></div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:14px;">
+    <div class="card">
+      <div class="card-title"><span class="icon">📖</span>Seminal Studies</div>
+      <div style="border-left:4px solid var(--teal);padding:8px 12px;margin-bottom:10px;background:#f0fafa;border-radius:0 6px 6px 0;">
+        <div style="font-size:12px;font-weight:700;color:var(--teal);">Gourlay et al. (1982 & 1984)</div>
+        <div style="font-size:12px;margin-top:4px;">Single 20 mg IV bolus at induction → median analgesic duration 27 hours. Of 23 patients: 39% required no postoperative analgesia, 26% required only non-opioids, 35% required opioid rescue. No patient required naloxone. Established MEAC (~30 ng/mL) and respiratory depression threshold (~100 ng/mL).</div>
+      </div>
+      <div style="border-left:4px solid var(--blue);padding:8px 12px;background:#f0f4ff;border-radius:0 6px 6px 0;">
+        <div style="font-size:12px;font-weight:700;color:var(--blue);">Wong et al. (2026) — Most Recent RCT</div>
+        <div style="font-size:12px;margin-top:4px;">80-patient cardiac surgery RCT. Methadone 0.2 mg/kg vs. morphine 0.2 mg/kg. Results: 63% less morphine at 24h, 69% less overall; lower pain scores through 72h; higher satisfaction at all time points; no difference in adverse effects. Analgesia persisted 48–72h post-extubation after levels fell below MEAC — attributed to NMDA and SNRI mechanisms.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">📊</span>Systematic Review Findings (2019–2025)</div>
+      <table>
+        <thead><tr><th>Outcome</th><th>Finding</th></tr></thead>
+        <tbody>
+          <tr><td>Postoperative pain scores</td><td><span class="tag green">Consistent reduction</span> across 4 meta-analyses and multiple RCTs</td></tr>
+          <tr><td>Postoperative opioid consumption</td><td><span class="tag green">40–69% reduction</span> in key RCTs</td></tr>
+          <tr><td>Respiratory depression vs. other opioids</td><td><span class="tag green">No significant difference</span> (n&gt;14,000 and n&gt;29,000 retrospective studies)</td></tr>
+          <tr><td>QTc prolongation (single dose)</td><td><span class="tag green">No significant difference</span> in perioperative trials</td></tr>
+          <tr><td>PONV</td><td><span class="tag green">No difference or slight reduction</span> vs. comparators</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🚧</span>Why Adoption Has Been Slow</div>
+    <div class="grid-4">
+      <div style="background:#fef9e7;border-radius:8px;padding:12px;text-align:center;"><div style="font-size:20px;">🏷️</div><div style="font-size:12px;font-weight:700;margin-top:6px;">Stigma</div><div style="font-size:11px;color:var(--muted);">Methadone-related stigma among healthcare workers</div></div>
+      <div style="background:#fef9e7;border-radius:8px;padding:12px;text-align:center;"><div style="font-size:20px;">📚</div><div style="font-size:12px;font-weight:700;margin-top:6px;">Misconceptions</div><div style="font-size:11px;color:var(--muted);">Misunderstanding of pharmacokinetics</div></div>
+      <div style="background:#fef9e7;border-radius:8px;padding:12px;text-align:center;"><div style="font-size:20px;">😨</div><div style="font-size:12px;font-weight:700;margin-top:6px;">Unfounded Fear</div><div style="font-size:11px;color:var(--muted);">Fear of prolonged respiratory depression not supported by clinical trials</div></div>
+      <div style="background:#fef9e7;border-radius:8px;padding:12px;text-align:center;"><div style="font-size:20px;">🏥</div><div style="font-size:12px;font-weight:700;margin-top:6px;">Formulary Gaps</div><div style="font-size:11px;color:var(--muted);">Limited provider familiarity and formulary availability</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  Intraoperative Methadone Clinical Reference Tool &nbsp;|&nbsp; For use by qualified perioperative providers &nbsp;|&nbsp; Always verify with current institutional protocols and literature
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+  }
+</script>
+</body>
+</html>
